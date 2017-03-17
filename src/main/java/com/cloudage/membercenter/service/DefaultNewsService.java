@@ -18,7 +18,7 @@ import com.cloudage.membercenter.repository.INewsRepository;
 @Component
 @Service
 @Transactional
-public class DefaultNewsService implements INewsService {
+public class DefaultNewsService implements INewsService{
 
 	@Autowired
 	INewsRepository newsRepo;
@@ -49,10 +49,8 @@ public class DefaultNewsService implements INewsService {
 	@Override
 	public Page<News> getNews(int page) {
 		Sort sort = new Sort(Direction.DESC,"createDate");
-		PageRequest pageRequest = new PageRequest(page, 10, sort);
+		PageRequest pageRequest = new PageRequest(page, 5, sort);
 		return newsRepo.findAll(pageRequest);
 	}
-
-	
 
 }

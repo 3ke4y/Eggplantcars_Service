@@ -7,11 +7,14 @@ import com.cloudage.membercenter.util.BaseEntity;
 
 @Entity
 public class User extends BaseEntity{
-	String account;
-	String passwordHash;
-	String name;
-	String email;
-	String avatar;
+	String account;  //账号ID
+	String passwordHash; //密码
+	String name; //账户名称
+	String avatar;  //账户头像
+	String sex ;//性别
+	String phone;//手机
+	String address; //地址(eg.东莞）
+	String email; //email地址
 
 	@Column(unique=true)
 	public String getAccount() {
@@ -21,7 +24,7 @@ public class User extends BaseEntity{
 	public String getPasswordHash() {
 		return passwordHash;
 	}
-	@Column(unique=true)
+	@Column(nullable=true)
 	public String getName() {
 		return name;
 	}
@@ -29,13 +32,7 @@ public class User extends BaseEntity{
 	public String getAvatar() {
 		return avatar;
 	}
-	@Column(nullable=false, unique=true)
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	
 	public void setAccount(String account) {
 		this.account = account;
 	}
@@ -48,4 +45,33 @@ public class User extends BaseEntity{
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
+	@Column(nullable=true)
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+	@Column(nullable=true)
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	@Column(nullable=true)
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	@Column(nullable=true)
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
 }
