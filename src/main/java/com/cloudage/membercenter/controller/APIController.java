@@ -19,7 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudage.membercenter.entity.News;
+import com.cloudage.membercenter.entity.NewsComment;
+import com.cloudage.membercenter.entity.NewsLike;
 import com.cloudage.membercenter.entity.User;
+import com.cloudage.membercenter.service.INewsCommentService;
+import com.cloudage.membercenter.service.INewsLikeService;
 import com.cloudage.membercenter.service.INewsService;
 import com.cloudage.membercenter.service.IUserService;
 
@@ -32,6 +36,14 @@ public class APIController {
 	@Autowired
 	INewsService newsService;
 
+	@Autowired
+	INewsCommentService newsCommentService;
+	
+	@Autowired
+	INewsLikeService newsLikeService;
+
+	
+	
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public @ResponseBody
 	String hello() {
@@ -111,5 +123,88 @@ public class APIController {
 	public Page<News> getNews(@PathVariable int page) {
 		return newsService.getNews(page);
 	}
+	
+	//在新闻详细页面显示评论
+	@RequestMapping("/News/{news_id}/comments") // 显示新闻评论
+	public Page<NewsComment> getNewsCommentsOfNews(@PathVariable int news_id) {
+		return newsCommentService.findNewsCommentsOfNews(news_id, 0);
+	}
+	@RequestMapping("/News/{news_id}/comments/{page}") // 评论分页显示
+	public Page<NewsComment> getNewsCommentsOfNews(@PathVariable int news_id, @PathVariable int page) {
+		return newsCommentService.findNewsCommentsOfNews(news_id, page);
+	}
+	
+	//评论上传
+	@RequestMapping(value = "/News/{news_id}/comments", method = RequestMethod.POST)
+	public NewsComment postNewsComments(
+			@PathVariable int news_id,
+			@RequestParam String commentText,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		News news = newsService.findOne(news_id);
+		NewsComment newsComment = new NewsComment();
+		newsComment.setAuthor(me);
+		newsComment.setNews(news);
+		newsComment.setCommentText(commentText);
+		return newsCommentService.save(newsComment);
+	}
+	
+	//统计评论条数
+	@RequestMapping("/News/{news_id}/commentscount")
+	public int commentCount(@PathVariable int news_id){
+		return newsCommentService.countComments(news_id);
+	}
+	
+	
+	//评论我的
+	@RequestMapping("/News/author_id/mycomments")
+	public Page<NewsComment> getNewsCommentOfMe(HttpServletRequest request){
+		User currentUser = getCurrentUser(request);
+		int author_id = currentUser.getId();
+		return newsCommentService.findAllOfMyNewsComment(author_id, 0);
+	}
+
+	//我的评论
+	@RequestMapping("/News/author_id/receivedcomment") // 显示所有对某人的评论
+	public Page<NewsComment> getNewsCommentsOfAuthor(HttpServletRequest request) {
+		User currentUser = getCurrentUser(request);
+		int author_id = currentUser.getId();
+		return newsCommentService.findNewsCommentsOfAuthor(author_id, 0);
+	}
+	
+	
+	
+	//新闻  点赞条数统计
+	@RequestMapping("/News/{news_id}/likescount")
+	public int likesCount(@PathVariable int news_id){
+		return newsLikeService.countLikes(news_id);
+	}
+	//新闻  判断是否点赞
+	@RequestMapping("/News/{news_id}/isliked")
+	public boolean checkLiked(
+			@PathVariable int news_id,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		return newsLikeService.checkLiked(me.getId(),news_id);
+	}
+	//新闻  点赞提交到服务器
+	@RequestMapping(value="/News/{news_id}/likes",method = RequestMethod.POST)
+	public int changeLikes(
+			@PathVariable int news_id,
+			@RequestParam boolean likes,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		News news = newsService.findOne(news_id);
+		if (likes) {
+			newsLikeService.addLike(me, news);
+		} else {
+			newsLikeService.removeLike(me, news);
+		}
+		return newsLikeService.countLikes(news_id);
+	}
+
+	
+	
+
 	
 }
