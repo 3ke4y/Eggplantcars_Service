@@ -11,11 +11,11 @@ import com.cloudage.membercenter.entity.User;
 
 public interface INotifyRepository extends PagingAndSortingRepository<Notify, Integer> {
 
-	//从NEWS表查找 新闻作者 为 User的用户
+	//从notify表查找 新闻作者 为 User的用户
 	@Query("from Notify notify where notify.author = ?1")
 	List<Notify> findAllByAuthor(User user);
 	
-	//从NEWS表查找 新闻作者ID 为 userID的用户
+	//从notify表查找 新闻作者ID 为 userID的用户
 	@Query("from Notify notify where notify.author.id = ?1")
 	List<Notify> findAllByAuthorId(Integer userId);
 }

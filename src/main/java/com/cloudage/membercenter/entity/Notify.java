@@ -21,14 +21,6 @@ public class Notify extends DateRecord {
 		this.author = author;
 	}
 	@Transient
-	public String getAuthorName(){
-		return author.name;
-	}
-	@Transient
-	public String getAuthorAvatar(){
-		return author.avatar;
-	}
-	@Transient
 	public Integer getAuthorId(){
 		return author.getId();
 	}

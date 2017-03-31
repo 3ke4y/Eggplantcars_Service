@@ -21,10 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudage.membercenter.entity.News;
 import com.cloudage.membercenter.entity.NewsComment;
 import com.cloudage.membercenter.entity.NewsLike;
+import com.cloudage.membercenter.entity.Noshery;
 import com.cloudage.membercenter.entity.User;
 import com.cloudage.membercenter.service.INewsCommentService;
 import com.cloudage.membercenter.service.INewsLikeService;
 import com.cloudage.membercenter.service.INewsService;
+import com.cloudage.membercenter.service.INosheryService;
 import com.cloudage.membercenter.service.IUserService;
 
 @RestController
@@ -41,6 +43,9 @@ public class APIController {
 	
 	@Autowired
 	INewsLikeService newsLikeService;
+	
+	@Autowired
+	INosheryService nosheryService;
 
 	
 	
@@ -157,19 +162,19 @@ public class APIController {
 	
 	
 	//评论我的
-	@RequestMapping("/News/author_id/mycomments")
+	@RequestMapping("/News/author_id/receivedcomment")
 	public Page<NewsComment> getNewsCommentOfMe(HttpServletRequest request){
 		User currentUser = getCurrentUser(request);
 		int author_id = currentUser.getId();
-		return newsCommentService.findAllOfMyNewsComment(author_id, 0);
+		return newsCommentService.findNewsCommentsOfAuthor(author_id, 0);
 	}
 
 	//我的评论
-	@RequestMapping("/News/author_id/receivedcomment") // 显示所有对某人的评论
+	@RequestMapping("/News/author_id/mycomments") // 显示所有对某人的评论
 	public Page<NewsComment> getNewsCommentsOfAuthor(HttpServletRequest request) {
 		User currentUser = getCurrentUser(request);
 		int author_id = currentUser.getId();
-		return newsCommentService.findNewsCommentsOfAuthor(author_id, 0);
+		return newsCommentService.findAllOfMyNewsComment(author_id, 0);
 	}
 	
 	
@@ -204,7 +209,34 @@ public class APIController {
 	}
 
 	
-	
-
-	
+	//快餐店列表显示
+	@RequestMapping(value="/shownoshery", method = RequestMethod.GET)
+	public Page<Noshery> getNoshery(){
+		return nosheryService.getNoshery(0);
+	}
+	//快餐店投稿上传
+	@RequestMapping(value="/addnoshery",method=RequestMethod.POST)
+	public Noshery postNoshery(
+			@RequestParam String nosheryName,
+			@RequestParam String nosheryPhone,
+			@RequestParam String nosheryAddress,
+			MultipartFile nosheryAvatar,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		Noshery noshery = new Noshery();
+		noshery.setShopkeeper(me);
+		noshery.setNosheryName(nosheryName);
+		noshery.setNosheryPhome(nosheryPhone);
+		noshery.setNosheryAddress(nosheryAddress);
+		if (nosheryAvatar != null) {
+			try {
+				String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF/nosheryload");
+				FileUtils.copyInputStreamToFile(nosheryAvatar.getInputStream(), new File(realPath,nosheryName+".png"));
+				noshery.setNosheryAvatar("nosheryload/"+nosheryName+".png");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return nosheryService.save(noshery);
+	}
 }

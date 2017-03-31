@@ -34,22 +34,22 @@ public class DefaultNewsCommentServie implements INewsCommentService {
 		return newsCommentRepo.findAllOfNewsId(news_id, pageRequest);
 	}
 
-	//所有对于新闻作者新闻的评论
+	//所有我的评论
 	@Override
 	public Page<NewsComment> findAllOfMyNewsComment(int author_id, int page) {
 		// TODO Auto-generated method stub
 		Sort sort = new Sort(Direction.DESC,"createDate");
 		PageRequest pageRequest = new PageRequest(page, 7,sort);
-		return newsCommentRepo.findAllOfNewsAuthorId(author_id, pageRequest);
+		return newsCommentRepo.findAllMyComment(author_id, pageRequest);
 	}
 
-	//所有我的评论
+	//所有评论我的
 	@Override
 	public Page<NewsComment> findNewsCommentsOfAuthor(int author_id, int page) {
 		// TODO Auto-generated method stub
 		Sort sort = new Sort(Direction.DESC,"createDate");
 		PageRequest pageRequest = new PageRequest(page, 7,sort);
-		return newsCommentRepo.findAllMyComment(author_id, pageRequest);
+		return newsCommentRepo.findAllOfNewsAuthorId(author_id, pageRequest);
 	}
 
 	@Override
