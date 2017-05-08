@@ -12,7 +12,7 @@ public class User extends BaseEntity{
 	String name; //账户名称
 	String avatar;  //账户头像
 	String sex ;//性别
-	String phone;//手机
+	String sign;//手机
 	String address; //地址(eg.东莞）
 	String email; //email地址
 
@@ -67,11 +67,11 @@ public class User extends BaseEntity{
 		this.email = email;
 	}
 	@Column(nullable=true)
-	public String getPhone() {
-		return phone;
+	public String getSign() {
+		return sign;
 	}
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setSign(String phone) {
+		this.sign = phone;
 	}
 	
 }

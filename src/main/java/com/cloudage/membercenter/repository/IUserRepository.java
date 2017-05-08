@@ -19,9 +19,7 @@ public interface IUserRepository extends PagingAndSortingRepository<User, Intege
 	//从user表查找 用户邮箱
 	@Query("from User user where user.email = ?1")
 	User findUserByEmail(String email);
-	//通过手机查找
-	@Query("from User user where user.phone = ?1")
-	User findUserByPhone(String phone);
+
 	////从user表查找 用户为account 重构
 	@Query("from User user where user.account = ?1")
 	User findUserByAccount(int account);

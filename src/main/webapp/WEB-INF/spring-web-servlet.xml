@@ -25,7 +25,7 @@
 	    class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
 	    >
 	    <property name="defaultEncoding" value="UTF-8"></property>
-	    <property name="maxUploadSize" value="400000"></property>
+	    <property name="maxUploadSize" value="500000"></property>
 	</bean>
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
@@ -33,6 +33,10 @@
 	<mvc:resources location="/WEB-INF/picload/" mapping="/picload/**"/>
 	<mvc:resources location="/WEB-INF/newsload/" mapping="/newsload/**"/>
 	<mvc:resources location="/WEB-INF/nosheryload/" mapping="/nosheryload/**"/>
+	<mvc:resources location="/WEB-INF/nosheryfoodload/" mapping="/nosheryfoodload/**"/>
+	<mvc:resources location="/WEB-INF/hotelload/" mapping="/hotelload/**"/>
+	<mvc:resources location="/WEB-INF/groupload/" mapping="/groupload/**"/>
+	<mvc:resources location="/WEB-INF/visitload/" mapping="/visitload/**"/>
 	<mvc:annotation-driven />
 
 </beans>

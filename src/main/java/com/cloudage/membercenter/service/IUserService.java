@@ -16,7 +16,6 @@ public interface IUserService {
 	User findByAccount(String account);
 	User findById(Integer uid);
 	User findByEmail(String email);
-	User findByPhone(String phone);
 	User findByPasswordHash(Integer userId,String passwordHash);
 	Page<User> getAllUser(int page);
 	User findUserByAccount(String account);

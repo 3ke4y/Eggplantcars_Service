@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudage.membercenter.entity.DayFelling;
 import com.cloudage.membercenter.entity.Notify;
 import com.cloudage.membercenter.entity.User;
+import com.cloudage.membercenter.service.IDayFellingService;
 import com.cloudage.membercenter.service.INotifyService;
 import com.cloudage.membercenter.service.IUserService;
 
@@ -28,6 +30,8 @@ public class UserInfoChangeController {
 	IUserService userService;
 	@Autowired
 	INotifyService notifyService;
+	@Autowired
+	IDayFellingService fellingService;
 	
 	@RequestMapping(value = "/hi", method=RequestMethod.GET)
 	public @ResponseBody String hi(){	
@@ -41,6 +45,37 @@ public class UserInfoChangeController {
 		HttpSession session=request.getSession(true);
 		Integer uid=(Integer) session.getAttribute("uid");
 		return userService.findById(uid);
+	}
+	
+	//修改密码
+	@RequestMapping(value="/passwordchange",method=RequestMethod.POST)
+	public boolean repassword(
+			@RequestParam String password,
+			@RequestParam String passwordHash,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		User user = userService.findByPasswordHash(me.getId(), password);
+		if (user == null) {
+			return false;
+		} else {
+			user.setPasswordHash(passwordHash);
+			userService.save(user);
+			return true;
+		}
+	}
+	//忘记密码短信验证修改
+	@RequestMapping(value="/forgetpasswordchange",method=RequestMethod.POST)
+	public boolean forgetpassword(
+			@RequestParam String passwordHash,
+			@RequestParam String account){
+		User user = userService.findUserByAccount(account);
+		if (user == null) {
+			return false;
+		} else {
+			user.setPasswordHash(passwordHash);
+			userService.save(user);
+			return true;
+		}
 	}
 	
 	// 修改昵称
@@ -68,14 +103,14 @@ public class UserInfoChangeController {
 		}
 	}
 	
-	//修改手机
+	//修改签名
 	@RequestMapping(value = "/userPhoneChange", method = RequestMethod.POST)
 	public boolean userPhoneChange(@RequestParam String phone, HttpServletRequest request) {
 		User currentUser = getCurrentUser(request);
 		if (currentUser == null) {
 			return false;
 		} else {
-			currentUser.setPhone(phone);
+			currentUser.setSign(phone);
 			userService.save(currentUser);
 			return true;
 		}
@@ -132,6 +167,24 @@ public class UserInfoChangeController {
 	@RequestMapping(value = "/shownotify",method = RequestMethod.GET)
 	public Page<Notify> getNotify(){
 		return notifyService.getNotify(0);
+	}
+	//显示心情
+	@RequestMapping("/showfelling")
+	public Page<DayFelling> getFelling(
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		return fellingService.findAllByAuthor(me,0);
+	}
+	//心情上传
+	@RequestMapping(value="/addfelling",method=RequestMethod.POST)
+	public DayFelling postDayFelling(
+			@RequestParam String text,
+			HttpServletRequest request){
+		User me = getCurrentUser(request);
+		DayFelling felling = new DayFelling();
+		felling.setAuthor(me);
+		felling.setText(text);
+		return fellingService.save(felling);
 	}
 	
 }

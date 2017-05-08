@@ -64,11 +64,6 @@ public class DefaultUserService implements IUserService {
 		return userRepo.findUserByAccount(account);
 	}
 
-	//通过手机查找
-	@Override
-	public User findByPhone(String phone) {
-		// TODO Auto-generated method stub
-		return userRepo.findUserByPhone(phone);
-	}
+
 
 }
